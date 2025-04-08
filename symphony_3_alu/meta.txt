@@ -44,21 +44,35 @@ flags 1111
 
 [instructions]
 
-or %a(register), %b(register), %c(register)
-00100001 aaaabbbb 0000cccc 00000000
-OR %b and %c and store the result in %a.
+nop
+00000000 00000000 00000000 00000000
+Does nothing
+
+in %a(register)
+00000001 aaaa0000 00000000 00000000
+Loads an input and stores it in %a
+
+out %a(register)
+00000010 00000000 0000aaaa 00000000
+Sends %a to output
+
+
 
 nand %a(register), %b(register), %c(register)
 00100000 aaaabbbb 0000cccc 00000000
 NAND %b and %c and store the result in %a.
 
-nor %a(register), %b(register), %c(register)
-00100011 aaaabbbb 0000cccc 00000000
-NOR %b and %c and store the result in %a.
+or %a(register), %b(register), %c(register)
+00100001 aaaabbbb 0000cccc 00000000
+OR %b and %c and store the result in %a.
 
 and %a(register), %b(register), %c(register)
 00100010 aaaabbbb 0000cccc 00000000
 AND %b and %c and store the result in %a.
+
+nor %a(register), %b(register), %c(register)
+00100011 aaaabbbb 0000cccc 00000000
+NOR %b and %c and store the result in %a.
 
 add %a(register), %b(register), %c(register)
 00100100 aaaabbbb 0000cccc 00000000
@@ -86,20 +100,8 @@ Compares %a and %b and store the resulting flags in r6.
 
 mul %a(register), %b(register), %c(register)
 00101010 aaaabbbb 0000cccc 00000000
-MUL %b and %c and store the result in %a.
+MUL %b and %c and store the result in %a.`
 
-in %a(register)
-00000001 aaaa0000 00000000 00000000
-Loads an input and stores it in %a
-
-out %a(register)
-00000010 00000000 0000aaaa 00000000
-Sends %a to output
-
-nop
-00000000 00000000 00000000 00000000
-Does nothing
-`
 default_assembly = `in r1
 in r2
 in r3

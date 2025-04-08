@@ -92,13 +92,8 @@ flags 1111
 
 nand %a(register), %b(register), %c(register)
 00100000 aaaabbbb 0000cccc 00000000
-NAND %b and %c and store the result in %a.
+NAND %b and %c and store the result in %a.`
 
-nop
-00000000 00000000 00000000 00000000
-Does nothing
-
-`
 default_assembly = `nand flags, r8, r5
 nand r5, zr, r12
 nand r4, flags, r2
