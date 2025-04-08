@@ -55,85 +55,39 @@ flags 1111
 
 [instructions]
 
-load_8 %dest(register), %address(register)
-01100000 dddd0000 0000aaaa 00000000
-Loads %address from RAM and stores it to %dest
+nop
+00000000 00000000 00000000 00000000
+Does nothing
 
-store_8 %address(register), %value(register)
-01100001 0000vvvv 0000aaaa 00000000
-Store %value to %address in RAM
+in %a(register)
+00000001 aaaa0000 00000000 00000000
+Loads an input and stores it in %a
 
-load_8 %dest(register), %address(immediate)
-01110000 dddd0000 aaaaaaaa aaaaaaaa
-Loads %address from RAM and stores it to %dest
+out %a(register)
+00000010 00000000 0000aaaa 00000000
+Sends %a to output
 
-store_8 %address(immediate), %value(register)
-01110001 0000vvvv aaaaaaaa aaaaaaaa
-Store %value to %address in RAM
+out %a(immediate)
+00010010 00000000 aaaaaaaa aaaaaaaa
+Sends %a to output
 
-load_16 %dest(register), %address(register)
-01100010 dddd0000 0000aaaa 00000000
-Loads %address from RAM and stores it to %dest
 
-store_16 %address(register), %value(register)
-01100011 0000vvvv 0000aaaa 00000000
-Store %value to %address in RAM
-
-load_16 %dest(register), %address(immediate)
-01110010 dddd0000 aaaaaaaa aaaaaaaa
-Loads %address from RAM and stores it to %dest
-
-store_16 %address(immediate), %value(register)
-01110011 0000vvvv aaaaaaaa aaaaaaaa
-Store %value to %address in RAM
-
-pload_8 %dest(register), %address(register)
-01100100 dddd0000 0000aaaa 00000000
-Loads %address from SSD and stores it to %dest
-
-pstore_8 %address(register), %value(register)
-01100101 0000vvvv 0000aaaa 00000000
-Store %value to %address in SSD
-
-pload_8 %dest(register), %address(immediate)
-01110100 dddd0000 aaaaaaaa aaaaaaaa
-Loads %address from SSD and stores it to %dest
-
-pstore_8 %address(immediate), %value(register)
-01110101 0000vvvv aaaaaaaa aaaaaaaa
-Store %value to %address in SSD
-
-pload_16 %dest(register), %address(register)
-01100110 dddd0000 0000aaaa 00000000
-Loads %address from SSD and stores it to %dest
-
-pstore_16 %address(register), %value(register)
-01100111 0000vvvv 0000aaaa 00000000
-Store %value to %address in SSD
-
-pload_16 %dest(register), %address(immediate)
-01110110 dddd0000 aaaaaaaa aaaaaaaa
-Loads %address from SSD and stores it to %dest
-
-pstore_16 %address(immediate), %value(register)
-01110111 0000vvvv aaaaaaaa aaaaaaaa
-Store %value to %address in SSD
-
-or %a(register), %b(register), %c(register)
-00100001 aaaabbbb 0000cccc 00000000
-OR %b and %c and store the result in %a.
 
 nand %a(register), %b(register), %c(register)
 00100000 aaaabbbb 0000cccc 00000000
 NAND %b and %c and store the result in %a.
 
-nor %a(register), %b(register), %c(register)
-00100011 aaaabbbb 0000cccc 00000000
-NOR %b and %c and store the result in %a.
+or %a(register), %b(register), %c(register)
+00100001 aaaabbbb 0000cccc 00000000
+OR %b and %c and store the result in %a.
 
 and %a(register), %b(register), %c(register)
 00100010 aaaabbbb 0000cccc 00000000
 AND %b and %c and store the result in %a.
+
+nor %a(register), %b(register), %c(register)
+00100011 aaaabbbb 0000cccc 00000000
+NOR %b and %c and store the result in %a.
 
 add %a(register), %b(register), %c(register)
 00100100 aaaabbbb 0000cccc 00000000
@@ -162,6 +116,7 @@ Compares %a and %b and store the resulting flags in r6.
 mul %a(register), %b(register), %c(register)
 00101010 aaaabbbb 0000cccc 00000000
 MUL %b and %c and store the result in %a.
+
 
 nand %a(register), %b(register), %c(immediate)
 00110000 aaaabbbb cccccccc cccccccc
@@ -203,29 +158,14 @@ lsr %a(register), %b(register), %c(immediate)
 00111000 aaaabbbb cccccccc cccccccc
 LSR %b and %c and store the result in %a.
 
-mul %a(register), %b(register), %c(immediate)
-00111010 aaaabbbb cccccccc cccccccc
-MUL %b and %c and store the result in %a.
-
 cmp %a(register), %b(immediate)
 00111001 1111aaaa bbbbbbbb bbbbbbbb
 Compares %a and %b and store the resulting flags in r6.
 
+mul %a(register), %b(register), %c(immediate)
+00111010 aaaabbbb cccccccc cccccccc
+MUL %b and %c and store the result in %a.`
 
-in %a(register)
-00000001 aaaa0000 00000000 00000000
-Loads an input and stores it in %a
-
-out %a(register)
-00000010 00000000 0000aaaa 00000000
-Sends %a to output
-
-nop
-00000000 00000000 00000000 00000000
-Does nothing
-
-
-`
 default_assembly = `in r1
 in r2
 in r3

@@ -63,9 +63,9 @@ flags 1111
 
 [instructions]
 
-nand %a(register), %b(register), %c(register)
-00100000 aaaabbbb 0000cccc 00000000
-NAND %b and %c and store the result in %a.
+nop
+00000000 00000000 00000000 00000000
+Does nothing
 
 in %a(register)
 00000001 aaaa0000 00000000 00000000
@@ -75,11 +75,12 @@ out %a(register)
 00000010 00000000 0000aaaa 00000000
 Sends %a to output
 
-nop
-00000000 00000000 00000000 00000000
-Does nothing
 
-`
+
+nand %a(register), %b(register), %c(register)
+00100000 aaaabbbb 0000cccc 00000000
+NAND %b and %c and store the result in %a.`
+
 default_assembly = `nand r8, r5, r5
 nand r12, r4, flags
 in r4
