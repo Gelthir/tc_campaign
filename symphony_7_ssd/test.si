@@ -214,6 +214,7 @@ def retire_instruction(instruction: Int, $scratch_space: [Int], input: Int) Int 
                 7 { result = a_value << b_value }
                 8 { result = a_value >> b_value }
                 9 { result = flag_result(a_value, b_value) }
+                10 { result = a_value * b_value }
 
             scratch_space[REGS + dest] = result & 0xffff
 

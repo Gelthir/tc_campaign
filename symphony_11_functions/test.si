@@ -1,9 +1,17 @@
 
 const REGS = 0
-//const IO = 7
-const COUNTER = 16
-const TIMER_SNAPSHOT = 17
-const RAM = 18
+const COUNTER_0 = 16
+const KEYBOARD = COUNTER_0 + 1
+const CONSOLE = KEYBOARD + 1
+const FLUSH_0 = CONSOLE + 1
+const TIMER_SNAPSHOT = FLUSH_0 + 1
+const RAM = TIMER_SNAPSHOT + 1
+const SSD = RAM + 0x10000
+
+const OP_IO  = 0
+const OP_ALU = 1
+const OP_JMP = 2
+const OP_RAM = 3
 
 def retire_instruction(instruction: Int, $scratch_space: [Int], input: Int) Int {
     
@@ -37,13 +45,13 @@ def retire_instruction(instruction: Int, $scratch_space: [Int], input: Int) Int 
             const NOP         = 0
             const IO_IN       = 1
             const IO_OUT      = 2
-            const IO_KEYBOARD = 3
+            const IO_CONSOLE  = 3
             const IO_TIME_0   = 4
             const IO_TIME_1   = 5
             const IO_TIME_2   = 6
             const IO_TIME_3   = 7
             const IO_COUNTER  = 8
-            const IO_CONSOLE  = 9
+            const IO_KEYBOARD = 9
 
             switch opcode
                 IO_IN {
@@ -131,7 +139,10 @@ def retire_instruction(instruction: Int, $scratch_space: [Int], input: Int) Int 
                 9 { 
                     result = flag_result(a_value, b_value)
                 }
-            
+                10 {
+                    result = a_value * b_value
+                }
+
             scratch_space[REGS + dest] = result & 0xffff
 
         }
@@ -153,20 +164,66 @@ def retire_instruction(instruction: Int, $scratch_space: [Int], input: Int) Int 
 
         OP_RAM {
 
-            const LOAD  = 0
-            const STORE = 1
+            const LOAD_8    = 0
+            const STORE_8   = 1
+            const LOAD_16   = 2
+            const STORE_16  = 3
+            const PLOAD_8   = 4
+            const PSTORE_8  = 5
+            const PLOAD_16  = 6
+            const PSTORE_16 = 7
 
             switch opcode
-                LOAD {
 
-                    var value = scratch_space[RAM + b_value]
+                LOAD_8 {
+
+                    scratch_space[REGS + dest] = scratch_space[RAM + b_value]
+
+                }
+
+                STORE_8 {
+
+                    scratch_space[RAM + b_value + 0] = a_value & 0xff
+
+                }
+
+                LOAD_16 {
+
+                    var value = scratch_space[RAM + b_value] << 8 + scratch_space[RAM + b_value + 1]
                     scratch_space[REGS + dest] = value
 
                 }
 
-                STORE {
+                STORE_16 {
 
-                    scratch_space[RAM + b_value] = a_value & 0xff
+                    scratch_space[RAM + b_value + 1] = a_value & 0xff
+                    scratch_space[RAM + b_value + 0] = a_value >> 8
+
+                }
+
+                PLOAD_8 {
+
+                    scratch_space[REGS + dest] = scratch_space[SSD + b_value]
+
+                }
+
+                PSTORE_8 {
+
+                    scratch_space[SSD + b_value + 0] = a_value & 0xff
+
+                }
+
+                PLOAD_16 {
+
+                    var value = scratch_space[SSD + b_value] << 8 + scratch_space[SSD + b_value + 1]
+                    scratch_space[REGS + dest] = value
+
+                }
+
+                PSTORE_16 {
+
+                    scratch_space[SSD + b_value + 1] = a_value & 0xff
+                    scratch_space[SSD + b_value + 0] = a_value >> 8
 
                 }
 
@@ -179,10 +236,6 @@ def retire_instruction(instruction: Int, $scratch_space: [Int], input: Int) Int 
     return Z_STATE
 
 }
-const OP_IO  = 0
-const OP_ALU = 1
-const OP_JMP = 2
-const OP_RAM = 3
 
 def flag_result(a: Int, b: Int) Int {
 

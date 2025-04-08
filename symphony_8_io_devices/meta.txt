@@ -257,67 +257,67 @@ counter %a(register)
 Loads the counter value and stores it to %a
 
 
-load_8 %dest(register), [%address(register)]
+load_8 %dest(register), %address(register)
 01100000 dddd0000 0000aaaa 00000000
 Loads %address from RAM and stores it to %dest
 
-store_8 [%address(register)], %value(register)
+store_8 %address(register), %value(register)
 01100001 0000vvvv 0000aaaa 00000000
 Store %value to %address in RAM
 
-load_8 %dest(register), [%address(immediate)]
+load_8 %dest(register), %address(immediate)
 01110000 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from RAM and stores it to %dest
 
-store_8 [%address(immediate)], %value(register)
+store_8 %address(immediate), %value(register)
 01110001 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in RAM
 
-load_16 %dest(register), [%address(register)]
+load_16 %dest(register), %address(register)
 01100010 dddd0000 0000aaaa 00000000
 Loads %address from RAM and stores it to %dest
 
-store_16 [%address(register)], %value(register)
+store_16 %address(register), %value(register)
 01100011 0000vvvv 0000aaaa 00000000
 Store %value to %address in RAM
 
-load_16 %dest(register), [%address(immediate)]
+load_16 %dest(register), %address(immediate)
 01110010 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from RAM and stores it to %dest
 
-store_16 [%address(immediate)], %value(register)
+store_16 %address(immediate), %value(register)
 01110011 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in RAM
 
-pload_8 %dest(register), [%address(register)]
+pload_8 %dest(register), %address(register)
 01100100 dddd0000 0000aaaa 00000000
 Loads %address from SSD and stores it to %dest
 
-pstore_8 [%address(register)], %value(register)
+pstore_8 %address(register), %value(register)
 01100101 0000vvvv 0000aaaa 00000000
 Store %value to %address in SSD
 
-pload_8 %dest(register), [%address(immediate)]
+pload_8 %dest(register), %address(immediate)
 01110100 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from SSD and stores it to %dest
 
-pstore_8 [%address(immediate)], %value(register)
+pstore_8 %address(immediate), %value(register)
 01110101 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in SSD
 
-pload_16 %dest(register), [%address(register)]
+pload_16 %dest(register), %address(register)
 01100110 dddd0000 0000aaaa 00000000
 Loads %address from SSD and stores it to %dest
 
-pstore_16 [%address(register)], %value(register)
+pstore_16 %address(register), %value(register)
 01100111 0000vvvv 0000aaaa 00000000
 Store %value to %address in SSD
 
-pload_16 %dest(register), [%address(immediate)]
+pload_16 %dest(register), %address(immediate)
 01110110 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from SSD and stores it to %dest
 
-pstore_16 [%address(immediate)], %value(register)
+pstore_16 %address(immediate), %value(register)
 01110111 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in SSD
 
@@ -348,7 +348,7 @@ in flags
 
 add r5, r5, r12
 nand r2, r10, r12
-load_8 sp, [5380]
+load_8 sp, 5380
 nor r2, r4, 3235
 mul zr, r3, 59245
 jae label_6
@@ -369,16 +369,16 @@ mul r3, sp, r11
 or r9, r9, r8
 xor r10, r13, flags
 out r7
-pload_8 r13, [494]
+pload_8 r13, 494
 in r13
 nand r1, sp, r6
-pload_16 r7, [4]
+pload_16 r7, 4
 and zr, r8, 9087
 and r3, r9, r9
 lsl r8, r11, r4
 nand r7, r10, flags
 or r13, r1, 10804
-pload_16 r12, [4]
+pload_16 r12, 4
 lsr r3, r6, r12
 cmp r12, r6
 sub r5, r2, r12
@@ -392,22 +392,22 @@ out r9
 label_38:
 xor r8, zr, r13
 lsl r2, r9, r7
-store_16 [5380], r3
+store_16 5380, r3
 nand r4, r8, r9
-pload_16 r3, [494]
-load_16 r7, [5380]
+pload_16 r3, 494
+load_16 r7, 5380
 cmp r4, r11
 nor r8, r8, 16885
 jmp label_49
 cmp zr, r6
 label_49:
 or r12, zr, 14630
-pload_8 r9, [494]
+pload_8 r9, 494
 xor r1, flags, 53197
-store_8 [5380], r4
+store_8 5380, r4
 lsr r7, flags, r2
 nand r6, r2, r12
-pload_8 flags, [494]
+pload_8 flags, 494
 jbe label_59
 lsr r4, r10, sp
 label_59:
@@ -421,15 +421,15 @@ xor r9, zr, 60637
 jmp label_69
 nor r11, r5, r3
 label_69:
-load_16 r2, [5380]
+load_16 r2, 5380
 cmp r7, r13
 or r5, r13, 28091
 cmp sp, sp
 mul r1, r1, 35113
 cmp r13, r4
 sub r3, r11, r9
-store_8 [5380], r10
-pload_16 zr, [494]
+store_8 5380, r10
+pload_16 zr, 494
 sub r6, r12, flags
 jmp label_83
 or r8, r11, sp
@@ -438,11 +438,11 @@ jmp label_86
 lsr r10, r13, 16033
 label_86:
 and r8, r10, 58635
-pload_16 flags, [494]
+pload_16 flags, 494
 xor r1, flags, 27123
 nand r1, r9, 7776
 cmp r1, r2
-load_8 r9, [5380]
+load_8 r9, 5380
 nand r6, r13, 63313
 nand r12, r5, 7924
 and r2, flags, 5672
@@ -464,15 +464,15 @@ in r6
 mul r11, r4, r2
 xor r7, r1, 60877
 cmp r4, r11
-store_16 [5380], r10
+store_16 5380, r10
 nand r3, r3, r7
 nor flags, r1, 50849
-store_8 [5380], r8
+store_8 5380, r8
 cmp r7, r10
 or r5, sp, r8
 lsr r12, r3, 46799
 jmp label_124
-load_16 r11, [5380]
+load_16 r11, 5380
 label_124:
 nand r3, r8, 20146
 nor r3, r12, r13
@@ -482,15 +482,15 @@ and zr, r3, 2318
 label_130:
 xor r2, r9, r11
 out r8
-pstore_16 [494], r3
+pstore_16 494, r3
 or sp, r13, 25150
 in r4
-store_8 [5380], r13
+store_8 5380, r13
 add r1, flags, r6
 jne label_140
 in r12
 label_140:
-pload_8 r7, [494]
+pload_8 r7, 494
 cmp sp, r7
 lsr r12, r2, 32109
 lsr r11, sp, r12
@@ -502,12 +502,12 @@ cmp r2, r10
 jmp label_152
 sub r9, r13, 16526
 label_152:
-pstore_16 [494], sp
+pstore_16 494, sp
 or r12, zr, 60162
 lsr r5, r9, r4
-pstore_8 [4], r11
+pstore_8 4, r11
 and zr, r8, r12
-pload_16 r8, [494]
+pload_16 r8, 494
 lsr r5, r4, 34139
 nand r11, r6, 19541
 and r9, r3, 31256
@@ -525,9 +525,9 @@ sub r9, r11, r2
 label_173:
 label_172:
 and r10, r10, 34469
-load_8 r4, [5380]
-store_16 [5380], r5
-pstore_8 [494], r11
+load_8 r4, 5380
+store_16 5380, r5
+pstore_8 494, r11
 in r10
 or flags, r5, r7
 jmp label_184
@@ -535,7 +535,7 @@ or r1, r4, r5
 label_184:
 lsl r6, r3, r2
 add r2, r9, 36510
-pstore_8 [494], r13
+pstore_8 494, r13
 cmp flags, sp
 xor r9, r12, r13
 out r13
@@ -551,9 +551,9 @@ label_199:
 jmp label_203
 or r4, r2, r3
 label_203:
-pload_16 r9, [4]
+pload_16 r9, 4
 sub flags, r7, r8
-load_16 zr, [5380]
+load_16 zr, 5380
 cmp r5, r12
 je label_210
 nor r5, zr, 32581
@@ -571,7 +571,7 @@ sub r10, r11, flags
 mul zr, r4, r12
 mul flags, r11, r9
 nor r3, r10, 57299
-pload_16 r2, [4]
+pload_16 r2, 4
 or r8, r3, zr
 nand r3, r10, 44884
 add r3, r9, 9312
@@ -626,7 +626,7 @@ sub r9, r3, 26030
 nand zr, zr, r11
 nand r11, r6, r8
 nand sp, r13, r6
-load_8 r11, [5380]
+load_8 r11, 5380
 jmp label_275
 xor r12, r11, r5
 label_275:
@@ -635,8 +635,8 @@ jmp label_279
 in r8
 label_279:
 add sp, sp, 26191
-load_8 r7, [5380]
-pload_8 r9, [4]
+load_8 r7, 5380
+pload_8 r9, 4
 jbe label_286
 xor r12, r4, r12
 label_286:
@@ -645,10 +645,10 @@ sub r1, r2, 63830
 label_289:
 nand r11, r9, r11
 cmp r4, flags
-load_16 r6, [5380]
+load_16 r6, 5380
 and r13, r9, 11954
 nor r9, zr, 37472
-pload_8 zr, [4]
+pload_8 zr, 4
 sub r2, r4, r11
 nor r7, zr, r11
 add r5, zr, sp
@@ -667,10 +667,10 @@ cmp r1, r2
 label_310:
 nand r1, zr, r1
 jle label_310
-load_16 zr, [5380]
+load_16 zr, 5380
 out r11
 sub r10, flags, 28765
-store_8 [5380], r6
+store_8 5380, r6
 and r9, r8, flags
 mul sp, r12, 2929
 jmp label_318
@@ -684,10 +684,10 @@ lsr r9, r1, 11985
 xor r12, flags, r5
 lsr r6, r10, flags
 jb label_328
-pload_16 r11, [4]
+pload_16 r11, 4
 label_328:
 sub r8, sp, r5
-store_16 [5380], sp
+store_16 5380, sp
 nor r10, r12, 17937
 add flags, r1, r4
 add r10, r2, 48428
@@ -704,7 +704,7 @@ xor r4, r7, 33830
 nor r11, r5, r6
 nor r10, r2, r1
 and r4, r9, 15681
-pload_8 r11, [4]
+pload_8 r11, 4
 and r1, r4, zr
 in r4
 or r1, zr, 0
@@ -713,13 +713,13 @@ cmp r1, r2
 label_355:
 nand r1, zr, r1
 jmp label_355
-pload_16 r1, [4]
+pload_16 r1, 4
 lsr r4, r4, 12595
 in r2
 jg label_360
 nand r7, r9, 1870
 label_360:
-store_16 [5380], r6
+store_16 5380, r6
 lsl r11, r3, sp
 and r5, flags, 47341
 nand flags, r8, 49451
@@ -744,7 +744,7 @@ in r9
 nand r10, r9, r8
 cmp r4, r13
 sub r11, r10, 15858
-store_8 [5380], r12
+store_8 5380, r12
 add r10, r7, 39695
 mul r4, r5, 9828
 lsl r13, r11, 40819
@@ -759,14 +759,14 @@ and r6, r12, 16962
 xor r7, r4, 8414
 and r5, flags, r3
 nor r2, r7, 11076
-pstore_16 [494], r10
-load_16 r3, [5380]
+pstore_16 494, r10
+load_16 r3, 5380
 add r13, r7, r13
 out r8
 lsr r7, r11, flags
 xor r10, zr, flags
 out r10
-pstore_16 [4], sp
+pstore_16 4, sp
 in r7
 lsr r13, r11, 39488
 add r7, r4, 24263
@@ -811,7 +811,7 @@ xor flags, r1, r2
 jae label_445
 or r11, r2, r11
 label_445:
-store_16 [5380], r1
+store_16 5380, r1
 add r2, r4, 54201
 in r5
 cmp flags, sp
@@ -825,10 +825,10 @@ jg label_458
 lsr r1, r4, 34078
 label_458:
 sub r9, zr, 35708
-store_8 [5380], zr
+store_8 5380, zr
 nand r1, r9, 5287
 jmp label_464
-pload_8 zr, [494]
+pload_8 zr, 494
 label_464:
 nor sp, r8, sp
 jmp label_468
@@ -836,20 +836,20 @@ sub r3, r12, r6
 label_468:
 lsr r10, r10, 41093
 nor r8, r7, 4628
-load_8 zr, [5380]
+load_8 zr, 5380
 lsr r10, r9, sp
-store_16 [5380], r12
+store_16 5380, r12
 or r10, r11, r13
 add r1, r1, 64108
 mul r3, r9, r8
 sub r8, zr, r3
-load_8 r5, [5380]
+load_8 r5, 5380
 nor r5, r13, r11
 and r13, r9, 25955
 or r7, r2, r12
 mul r12, r1, 46834
 xor r7, flags, r7
-load_16 sp, [5380]
+load_16 sp, 5380
 jne label_487
 or r1, zr, 0
 or r2, zr, 1
@@ -872,7 +872,7 @@ jb label_501
 nor r5, r13, r8
 label_501:
 out r12
-store_8 [5380], sp
+store_8 5380, sp
 cmp sp, r6
 nor sp, r3, r3
 nand flags, r13, r12
@@ -882,23 +882,23 @@ nor r6, zr, zr
 label_510:
 label_509:
 nand sp, r5, r10
-pload_8 zr, [4]
+pload_8 zr, 4
 cmp r1, r5
 and r1, r1, 6757
 jg label_518
 jmp label_519
-pload_8 r13, [4]
+pload_8 r13, 4
 label_519:
 label_518:
 add r5, r10, r12
 and zr, r2, r9
 out r4
 jmp label_526
-store_16 [5380], r8
+store_16 5380, r8
 label_526:
-store_16 [5380], r6
+store_16 5380, r6
 jmp label_530
-store_16 [5380], r9
+store_16 5380, r9
 label_530:
 in r5
 mul r1, r13, 33563
@@ -915,25 +915,25 @@ or r1, r9, 12465
 xor r13, r13, 58307
 lsl r2, r13, 52553
 lsr r4, zr, 59487
-load_8 flags, [5380]
+load_8 flags, 5380
 jge label_549
 cmp sp, r10
 label_549:
-store_8 [5380], r8
+store_8 5380, r8
 lsr sp, r7, flags
 cmp r2, r5
 or r5, r12, 36334
 nor flags, r3, sp
 or r10, r3, 51851
 lsl r5, zr, 21077
-pstore_16 [4], r10
+pstore_16 4, r10
 lsl zr, r10, 18065
 lsr r4, r2, r1
 or r6, r10, 50284
 lsl flags, r11, 7175
 in r1
 nand flags, r3, 33902
-store_16 [5380], r6
+store_16 5380, r6
 in r2
 lsr r8, r1, 50633
 jmp label_570
@@ -949,11 +949,11 @@ lsl flags, flags, 41387
 xor r8, zr, 50500
 mul r2, r6, r2
 mul r9, r7, flags
-pstore_8 [4], r4
-pload_16 r6, [4]
+pstore_8 4, r4
+pload_16 r6, 4
 cmp r5, r10
 jmp label_586
-pload_8 r12, [494]
+pload_8 r12, 494
 label_586:
 lsl r8, sp, 16838
 out r3
@@ -963,7 +963,7 @@ lsl sp, r3, 39129
 and r12, r11, 29171
 lsr zr, r13, r12
 lsr r1, r9, r4
-pstore_16 [4], r9
+pstore_16 4, r9
 or r1, zr, 0
 or r2, zr, 1
 cmp r1, r2
@@ -1013,14 +1013,14 @@ lsr r4, r9, 4235
 cmp r6, r10
 and r1, r4, r13
 add r9, r13, r4
-load_8 sp, [5380]
+load_8 sp, 5380
 xor r2, r7, r6
 mul r4, r8, zr
 sub r4, sp, sp
-pload_8 zr, [494]
+pload_8 zr, 494
 out r7
 cmp r12, r8
-store_16 [5380], r1
+store_16 5380, r1
 jmp label_652
 lsl r1, zr, r13
 label_652:
@@ -1046,15 +1046,15 @@ lsl r6, r2, r4
 in r13
 nand r11, r3, r6
 mul r13, r10, r11
-pstore_16 [4], r7
+pstore_16 4, r7
 jbe label_674
 cmp r6, r12
 label_674:
 out r4
-pload_8 r6, [494]
+pload_8 r6, 494
 lsl r9, r6, r7
 mul r5, flags, 50563
-load_8 r10, [5380]
+load_8 r10, 5380
 and r1, r9, r12
 in r1
 jbe label_684
@@ -1087,7 +1087,7 @@ lsl r3, r12, r6
 mul r8, r12, r1
 nand r4, r2, 63857
 nand r2, r8, r12
-pload_16 r10, [4]
+pload_16 r10, 4
 lsl r8, r4, r10
 out r12
 and r13, r11, r8
@@ -1096,7 +1096,7 @@ jge label_714
 lsr r2, r4, r7
 label_714:
 and r4, r9, r13
-load_8 r8, [5380]
+load_8 r8, 5380
 mul r11, r5, 32605
 and r3, r8, 62885
 or r1, zr, 0
@@ -1119,10 +1119,10 @@ label_731:
 add zr, r9, 3440
 cmp r6, r13
 cmp r7, r4
-pstore_8 [494], r6
+pstore_8 494, r6
 nor r9, r2, 48440
 mul r11, r13, r10
-load_16 r2, [5380]
+load_16 r2, 5380
 or r6, r10, 23820
 jmp label_742
 jl label_743
@@ -1150,22 +1150,22 @@ mul flags, r1, 20707
 sub flags, r4, r11
 add r11, r1, r5
 sub r6, r11, 40675
-pstore_8 [4], r5
+pstore_8 4, r5
 mul r4, r3, r6
 nor flags, zr, 41497
-load_16 r12, [5380]
+load_16 r12, 5380
 or r13, r11, r6
-load_16 r5, [5380]
+load_16 r5, 5380
 cmp zr, r10
 lsr r9, r4, 36204
-pstore_8 [494], zr
+pstore_8 494, zr
 jmp label_773
 or r9, r2, 47855
 label_773:
 jmp label_776
 add r5, sp, 10327
 label_776:
-pstore_8 [494], r5
+pstore_8 494, r5
 in r11
 add r3, r3, 17062
 and r10, r5, r8
@@ -1188,7 +1188,7 @@ cmp zr, r12
 lsl r8, r6, r11
 sub flags, r13, r12
 lsl r6, r12, 23005
-pstore_8 [494], r10
+pstore_8 494, r10
 or r4, r4, 34420
 mul r13, sp, r8
 jl label_805
@@ -1198,7 +1198,7 @@ mul sp, flags, sp
 in r1
 nand r12, r9, r12
 jmp label_811
-pload_16 r11, [494]
+pload_16 r11, 494
 label_811:
 nor r9, r2, r9
 or r1, zr, 0
@@ -1224,7 +1224,7 @@ label_824:
 add r12, r9, 35712
 lsr r13, zr, r8
 or r9, r3, 9830
-store_8 [5380], r4
+store_8 5380, r4
 in r3
 je label_832
 or r7, flags, sp
@@ -1250,7 +1250,7 @@ label_850:
 nand flags, r4, 8746
 sub flags, r6, r12
 nor r2, r6, sp
-load_16 flags, [5380]
+load_16 flags, 5380
 or zr, r7, r7
 jmp label_859
 or r1, zr, 0
@@ -1272,7 +1272,7 @@ xor r1, r6, 62795
 jl label_872
 cmp r1, r1
 label_872:
-pload_8 r3, [4]
+pload_8 r3, 4
 nor flags, r1, 65253
 cmp r7, r12
 sub sp, r11, r2
@@ -1280,8 +1280,8 @@ out r8
 jmp label_880
 sub r1, r5, 35387
 label_880:
-store_8 [5380], r10
-load_8 r3, [5380]
+store_8 5380, r10
+load_8 r3, 5380
 lsr r10, r10, 23781
 nand r8, sp, r4
 nor zr, flags, 775
@@ -1304,11 +1304,11 @@ or flags, zr, r10
 jmp label_901
 mul r1, flags, 4659
 label_901:
-store_8 [5380], r10
+store_8 5380, r10
 nor r7, zr, 17962
-pstore_16 [4], flags
+pstore_16 4, flags
 cmp r8, r6
-pload_8 zr, [4]
+pload_8 zr, 4
 jmp label_909
 or r1, zr, 0
 or r2, zr, 1
@@ -1318,7 +1318,7 @@ nand r1, zr, r1
 jmp label_910
 label_909:
 cmp r10, r7
-pstore_8 [494], sp
+pstore_8 494, sp
 nand zr, r5, r1
 mul r12, r12, r4
 lsr r13, r11, 47032
@@ -1374,15 +1374,15 @@ cmp r1, r2
 label_956:
 nand r1, zr, r1
 jbe label_956
-store_8 [5380], sp
-pload_8 r10, [4]
+store_8 5380, sp
+pload_8 r10, 4
 xor r7, r11, r10
 jmp label_961
 xor r11, r5, 44058
 label_961:
-store_16 [5380], r11
-store_8 [5380], r7
-pload_8 r2, [494]
+store_16 5380, r11
+store_8 5380, r7
+pload_8 r2, 494
 cmp r3, r7
 jmp label_968
 and r6, sp, r8
