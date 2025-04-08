@@ -1,0 +1,526 @@
+type Reference Int
+
+type Struct [[Int]]
+
+type IntTree Int
+
+const NULL = <Reference> 0
+
+var memory = [<Struct> -1]
+
+def on_reset($scratch_space: [Int], test: Int) {
+    let node = gen_random_tree(20)
+    let serialized = node.serialize()
+    var outputs = array(0, 0)
+    var input_count = 0
+    $scratch_space.push(0)
+    $scratch_space.push(0)
+    $scratch_space.push(0)
+    $scratch_space.push(0)
+    var i = 0
+    while i < serialized.len() {
+        $scratch_space.push(serialized[i])
+        input_count += 1
+        i += 1
+    }
+    i = 0
+    while i < 128 {
+        let op = <TreeInstruction> random(6)
+        var value = 0
+        if (<Reference> node -> "childCount")[0] == 0 {
+            if (op == move_to || op == remove_child) {
+                continue
+            }
+        }
+        switch op
+            add_node {
+                node.add_child(create_tree())
+            }
+            get_value {
+                $outputs.push((<Reference> node) -> "nodeValue")
+            }
+            remove_child {
+                value = random(((<Reference> node) -> "childCount")[0])
+                let temp = (<Reference> node) -> value
+                node.remove_child(value)
+                (<Reference> $temp).free()
+            }
+            to_parent {
+                node = *(((<Reference> node) -> "parent")[0])
+            }
+            move_to {
+                value = random(((<Reference> node) -> "childCount")[0])
+                node = *((<Reference> node) -> value)
+            }
+            set_value {
+                value = random(256)
+                node.set_node_value(value)
+            }
+        $scratch_space.push(<U3> op)
+        input_count += 1
+        if (op == move_to || op == set_value || op == remove_child) {
+            $scratch_space.push(value)
+            input_count += 1
+        }
+        i += 1
+    }
+    $scratch_space.push(256)
+    input_count += 1
+    scratch_space[1] = input_count
+    let output_start = input_count + 4
+    i = 0
+    while i < outputs.len() {
+        scratch_space[output_start + i] = outputs[i]
+        scratch_space[3] += 1
+        i += 1
+    }
+    print("reset")
+}
+
+type TreeInstruction <add_node, set_value, move_to, get_value, remove_child, to_parent>
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+    print_contents(scratch_space)
+    let input = scratch_space[scratch_space[0] + 4]
+    scratch_space[0] += 1
+    return input
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+    print("arch_check_output")
+    if (scratch_space[0] > scratch_space[1]) {
+        set_error("You should not read the input past the second value of 256.")
+        return fail
+    }
+    if (scratch_space[scratch_space[2] + scratch_space[1] + 4] != output) {
+        return fail
+    }
+    if (scratch_space[3] == scratch_space[2]) {
+        return win
+    }
+    scratch_space[2] += 1
+    return pass
+}
+
+def gen_random_tree(remaining_nodes: Int) IntTree {
+    var stack = array(0, <IntTree> 0)
+    var nodes_left = remaining_nodes - 1
+    let result = create_tree()
+    $stack.push(result)
+    while stack.len() > 0 {
+        let node_value = random(256)
+        let node = $stack.pop()
+        var childCount = random(nodes_left) + 1
+        node.set_node_value(node_value)
+        if (nodes_left <= 0) {
+            childCount = 0
+        }
+        var i = 0
+        while i < childCount {
+            let child = create_tree()
+            $stack.push(child)
+            node.add_child(child)
+            nodes_left -= 1
+            i += 1
+        }
+    }
+    return result
+}
+
+pub def create_struct() Struct {
+    var struct = array(3, array(0, 0))
+    struct[0] = array(0, 0)
+    struct[1] = array(0, 0)
+    struct[2] = array(0, 0)
+    return <Struct> struct
+}
+
+def hash(data: [U8]) Int {
+    var initial = 14695981039346656037
+    let prime = 1099511628211
+    var i = 0
+    _reg_alloc_use data
+    while i < data.len() {
+        initial *= prime
+        initial ^= <Int> data[i]
+        i += 1
+    }
+    return initial
+}
+
+def hash(data: String) Int {
+    return hash(<[U8]> data)
+}
+
+dot get_field_position(this: Struct, field_name: String) Int {
+    let this_array = (<[[Int]]> this)
+    let field_index = this_array[0].find_new(hash(field_name))
+    if field_index == -1 { throw(`Field {field_name} does not exist.`) }
+    var field_offset = 0
+    var i = 0
+    while i < field_index {
+        field_offset += this_array[1][i]
+        i += 1
+    }
+    return field_offset
+}
+
+pub dot set_field($this: Struct, field_name: String, field_value: [Int]) {
+    var this_array = (<[[Int]]> this)
+    let field_index = this_array[0].find_new(hash(field_name))
+    if field_index == -1 { throw(`Field {field_name} does not exist.`) }
+    let field_size = this_array[1][field_index]
+    if field_value.len() != field_size { throw(`Size of field {field_name} ({field_size}) does not match size of value {field_value}.`) }
+    let field_offset = this.get_field_position(field_name)
+    var i = 0
+    while i < field_size {
+        this_array[2][i + field_offset] = field_value[i]
+        i = i + 1
+    }
+    this = <Struct> this_array
+}
+
+pub dot set_field($this: Struct, field_name: String, field_value: Int) {
+    var value = this.get_field(field_name)
+    value[value.len() - 1] = field_value
+    $this.set_field(field_name, value)
+}
+
+pub dot make_field($this: Struct, field_name: String, field_size: Int) {
+    var struct = <[[Int]]> this
+    let names = struct[0]
+    let lengths = struct[1]
+    let names_length = names.len()
+    let lengths_length = lengths.len()
+    var names_new = array(names_length + 1, 0)
+    let values = struct[2]
+    let values_length = values.len()
+    var values_new = array(values_length + field_size, 0)
+    var i = 0
+    while i < names_length {
+        names_new[i] = names[i]
+        i = i + 1
+    }
+    names_new[names_length] = hash(field_name)
+    i = 0
+    var lengths_new = array(lengths_length + 1, 0)
+    while i < lengths_length {
+        lengths_new[i] = lengths[i]
+        i = i + 1
+    }
+    lengths_new[lengths_length] = field_size
+    i = 0
+    while i < values_length {
+        values_new[i] = values[i]
+        i += 1
+    }
+    struct[0] = names_new
+    struct[1] = lengths_new
+    struct[2] = values_new
+    this = <Struct> struct
+}
+
+pub dot get_field(this: Struct, field_name: String) [Int] {
+    var struct = <[[Int]]> this
+    let field_index = struct[0].find_new(hash(field_name))
+    if field_index == -1 { throw(`Field {field_name} does not exist.`) }
+    let field_size = struct[1][field_index]
+    var field_value = array(field_size, 0)
+    var field_offset = 0
+    var i = 0
+    while i < field_index {
+        field_offset += struct[1][i]
+        i += 1
+    }
+    i = 0
+    while i < field_size {
+        field_value[i] = struct[2][i + field_offset]
+        i += 1
+    }
+    return field_value
+}
+
+dot get_total_field_size(this: Struct) Int {
+    var i = 0
+    var total_size = 0
+    let field_sizes = (<[[Int]]> this)[1]
+    while i < field_sizes.len() {
+        total_size += field_sizes[i]
+        i += 1
+    }
+    return total_size
+}
+
+pub dot set_array($this: Struct, index: Int, value: Int) {
+    var struct = <[[Int]]> this
+    let array_offset = this.get_total_field_size()
+    if (struct[2].len() - array_offset <= index) {
+        let values_old = struct[2]
+        let values_length = values_old.len()
+        var values_new = array(index + array_offset + 1, 0)
+        var i = 0
+        while i < values_length {
+            values_new[i] = values_old[i]
+            i += 1
+        }
+        struct[2] = values_new
+    }
+    struct[2][index + array_offset] = value
+    this = <Struct> struct
+}
+
+pub dot get_array(this: Struct, index: Int) Int {
+    let array_offset = this.get_total_field_size()
+    return (<[[Int]]> this)[2][index + array_offset]
+}
+
+pub def str(this: Struct) String {
+    return str(<[[Int]]> this)
+}
+
+/// assume binary ==(a: @Type, b: @Type) Bool
+pub dot find_new(this: [@Type], value: @Type) Int {
+    var i = 0
+    while (i < this.len()) && !(this[i] == value) {
+        i += 1
+    }
+    if i == this.len() { return -1 }
+    return i
+}
+
+pub def throw(error: String) {
+    print("Exception: " + error)
+    exit(-1)
+}
+
+def is_array(this: [@Type]) Bool {
+    return true
+}
+
+def is_array(this: @Type) Bool {
+    return false
+}
+
+
+
+pub def new(unused: Reference) Reference {
+    let struct = create_struct()
+    let index = .memory.find_new(<Struct> 0)
+    if index != -1 {
+        .memory[index] = struct
+        return *index
+    }
+    $.memory.push(struct)
+    return *(.memory.len() - 1)
+}
+
+pub dot free($this: Reference) {
+    .memory[&this] = <Struct> 0
+    this = NULL
+}
+
+pub unary & (this: Reference) Int {
+    return <Int> this
+}
+
+pub unary * (this: Int) Reference {
+    return <Reference> this
+}
+
+pub binary -> (this: Reference, field: String) [Int] {
+    if (&this) == 0 {
+        throw("Null reference")
+    }
+    return .memory[&this].get_field(field)
+}
+
+pub binary -> (this: Reference, index: Int) Int {
+    if (&this) == 0 {
+        throw("Null reference")
+    }
+    return .memory[&this].get_array(index)
+}
+
+pub dot make(this: Reference, field: String, size: Int) {
+    if (&this) == 0 {
+        throw("Null reference")
+    }
+    var temp = .memory[&this]
+    $temp.make_field(field, size)
+    .memory[&this] = temp
+}
+
+pub dot set(this: Reference, field: String, value: [Int]) {
+    if (&this) == 0 {
+        throw("Null reference")
+    }
+    var temp = .memory[&this]
+    $temp.set_field(field, value)
+    .memory[&this] = temp
+}
+
+pub dot set(this: Reference, field: String, value: Int) {
+    if (&this) == 0 {
+        throw("Null reference")
+    }
+    var temp = .memory[&this]
+    $temp.set_field(field, value)
+    .memory[&this] = temp
+}
+
+pub dot set(this: Reference, index: Int, value: Int) {
+    if (&this) == 0 {
+        throw("Null reference")
+    }
+    var temp = .memory[&this]
+    $temp.set_array(index, value)
+    .memory[&this] = temp
+}
+
+pub def str(this: Reference) String {
+    return str(.memory[&this])
+}
+
+
+
+pub def create_tree() IntTree {
+    let tree = new(<Reference> 0)
+    tree.make("nodeValue", 1)
+    tree.make("hasValue", 1)
+    tree.make("childCount", 1)
+    tree.make("parent", 1)
+    tree.set("parent", &tree)
+    return <IntTree> tree
+}
+
+pub def str(tree: IntTree) String {
+    return str(<Reference> tree)
+}
+
+pub dot set_node_value(this: IntTree, new_value: Int) {
+    var struct = <Reference> this
+    struct.set("nodeValue", [new_value])
+    struct.set("hasValue", [1])
+}
+
+pub dot add_child(this: IntTree, other: IntTree) {
+    let struct = <Reference> this
+    let other_ref = <Reference> other
+    struct.set("childCount", [(struct -> "childCount")[0] + 1])
+    struct.set((struct -> "childCount")[0] - 1, &(<Reference> other))
+    other_ref.set("parent", &struct)
+}
+
+pub dot remove_child(this: IntTree, index: Int) {
+    let ref = <Reference> this
+    ref.set(index, &NULL)
+    var i = index + 1
+    while (i < (ref -> "childCount")[0]) {
+        ref.set(i - 1, (ref -> i))
+        i += 1
+    }
+    ref.set("childCount", (ref -> "childCount")[0] - 1)
+}
+
+pub dot get_child(this: IntTree, index: Int) IntTree {
+    var struct = <Reference> this
+    return <IntTree> (struct -> index)
+}
+
+pub dot serialize(this: IntTree) [Int] {
+    let referenced_nodes = this.get_referenced_nodes()
+    var result = array(0, 0)
+    var i = 0
+    while i < referenced_nodes.len() {
+        let node = <Reference> referenced_nodes[i]
+        $result.push(i)
+        $result.push((node -> "nodeValue")[0])
+        $result.push((node -> "childCount")[0])
+        var j = 0
+        while j < (node -> "childCount")[0] {
+            $result.push(referenced_nodes.find_new((<IntTree> node).get_child(j)))
+            j += 1
+        }
+        i += 1
+    }
+    $result.push(256)
+    return result
+}
+
+pub dot get_referenced_nodes(this: IntTree) [IntTree] {
+    let ref = <Reference> this
+    var result = array(0, <IntTree> 0)
+    if ((ref -> "childCount")[0] == 0) {
+        $result.push(this)
+        return result
+    }
+
+    /* From https://stackoverflow.com/questions/5987867/traversing-a-n-ary-tree-without-using-recurrsion
+    stack<Node> stk;
+    stk.push(node);
+
+    while (!stk.empty()) {
+        Node top = stk.pop();
+        for (Node child in top.getChildren()) {
+            stk.push(child);
+        }
+        process(top);
+    }
+    */
+
+    var stack = array(0, <IntTree> 0)
+    $stack.push(this)
+    while stack.len() != 0 {
+        let top = $stack.pop()
+        let top_ref = <Reference> top
+        var i = 0
+        while i < (top_ref -> "childCount")[0] {
+            let child = top.get_child(i)
+            $stack.push(child)
+            i += 1
+        }
+        $result.push(top)
+    }
+    return result
+}
+
+dot push($this: [@Type], value: @Type) {
+    var new = array(this.len() + 1, _default(:@Type))
+    var i = 0
+    while i < this.len() {
+        new[i] = this[i]
+        i += 1
+    }
+    new[this.len()] = value
+    this = new
+}
+
+dot pop($this: [@Type]) @Type {
+    var new = array(this.len() - 1, _default(:@Type))
+    var i = 0
+    while i < (new.len()) {
+        new[i] = this[i]
+        i += 1
+    }
+    let temp = this[this.len() - 1]
+    this = new
+    return temp
+}
+
+pub def concat(left: [@Type], right: [@Type]) [@Type] {
+    var new = left
+    var i = 0
+    while i < right.len() {
+        $new.push(right[i])
+        i += 1
+    }
+    return new
+}
+
+def print_contents(arr: [Int]) {
+    var idx = 0
+    while idx < 256 {
+        print(`{idx}: {arr[idx]} | {idx+1}: {arr[idx+1]} | {idx+2}: {arr[idx+2]} | {idx+3}: {arr[idx+3]}`)
+        idx += 4
+    }
+}
