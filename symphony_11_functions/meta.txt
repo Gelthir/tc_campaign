@@ -231,39 +231,39 @@ counter %a(register)
 Loads the counter value and stores it to %a
 
 
-load_8 %dest(register), %address(register)
+load_8 %dest(register), [%address(register)]
 01100000 dddd0000 0000aaaa 00000000
 Loads %address from RAM and stores it to %dest
 
-store_8 %address(register), %value(register)
+store_8 [%address(register)], %value(register)
 01100001 0000vvvv 0000aaaa 00000000
 Store %value to %address in RAM
 
-load_8 %dest(register), %address(immediate)
+load_8 %dest(register), [%address(immediate)]
 01110000 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from RAM and stores it to %dest
 
-store_8 %address(immediate), %value(register)
+store_8 [%address(immediate)], %value(register)
 01110001 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in RAM
 
-load_16 %dest(register), %address(register)
+load_16 %dest(register), [%address(register)]
 01100010 dddd0000 0000aaaa 00000000
 Loads %address from RAM and stores it to %dest
 
-store_16 %address(register), %value(register)
+store_16 [%address(register)], %value(register)
 01100011 0000vvvv 0000aaaa 00000000
 Store %value to %address in RAM
 
-load_16 %dest(register), %address(immediate)
+load_16 %dest(register), [%address(immediate)]
 01110010 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from RAM and stores it to %dest
 
-store_16 %address(immediate), %value(register)
+store_16 [%address(immediate)], %value(register)
 01110011 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in RAM
 
-pload_8 %dest(register), %address(register)
+pload_8 %dest(register), [%address(register)]
 01100100 dddd0000 0000aaaa 00000000
 Loads %address from SSD and stores it to %dest
 
@@ -271,27 +271,27 @@ pstore_8 %address(register), %value(register)
 01100101 0000vvvv 0000aaaa 00000000
 Store %value to %address in SSD
 
-pload_8 %dest(register), %address(immediate)
+pload_8 %dest(register), [%address(immediate)]
 01110100 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from SSD and stores it to %dest
 
-pstore_8 %address(immediate), %value(register)
+pstore_8 [%address(immediate)], %value(register)
 01110101 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in SSD
 
-pload_16 %dest(register), %address(register)
+pload_16 %dest(register), [%address(register)]
 01100110 dddd0000 0000aaaa 00000000
 Loads %address from SSD and stores it to %dest
 
-pstore_16 %address(register), %value(register)
+pstore_16 [%address(register)], %value(register)
 01100111 0000vvvv 0000aaaa 00000000
 Store %value to %address in SSD
 
-pload_16 %dest(register), %address(immediate)
+pload_16 %dest(register), [%address(immediate)]
 01110110 dddd0000 aaaaaaaa aaaaaaaa
 Loads %address from SSD and stores it to %dest
 
-pstore_16 %address(immediate), %value(register)
+pstore_16 [%address(immediate)], %value(register)
 01110111 0000vvvv aaaaaaaa aaaaaaaa
 Store %value to %address in SSD
 
@@ -326,19 +326,19 @@ Not %b and store the result in %a.
 
 push %a(register)
 01010101 11101110 00000000 00000010   11000011 0000aaaa 00001110 00000000
-Pushes %a on to the stack. This instruction is a synonym for:   sub sp, sp, 2   store_16 sp, %a
+Pushes %a on to the stack. This instruction is a synonym for:   sub sp, sp, 2   store_16 [sp], %a
 
 pop %a(register)
 11000010 aaaa0000 00001110 00000000   01010100 11101110 00000000 00000010
-Pops %a off the stack. This instruction is a synonym for:   load_16 %a, sp   add sp, sp, 2
+Pops %a off the stack. This instruction is a synonym for:   load_16 %a, [sp]   add sp, sp, 2
 
 call %a(label)
 00001000 11110000 00000000 00000000   01010100 11111111 00000000 00010100   01010101 11101110 00000000 00000010   11000011 00001111 00001110 00000000   10011000 00001111 aaaaaaaa aaaaaaaa
-Calls %a. Overwrites the flag register. This instruction is a synonym for:   counter flags   add flags, flags, 20   sub sp, sp, 2   store_16 sp, flags   jmp %a
+Calls %a. Overwrites the flag register. This instruction is a synonym for:   counter flags   add flags, flags, 20   sub sp, sp, 2   store_16 [sp], flags   jmp %a
 
 ret
 11000010 11110000 00001110 00000000   01010100 11101110 00000000 00000010   10001000 00001111 00001111 00000000
-Returns from the last function call. Overwrites the flag register. This instruction is a synonym for:   load_16 flags, sp   add sp, sp, 2   jmp flags
+Returns from the last function call. Overwrites the flag register. This instruction is a synonym for:   load_16 flags, [sp]   add sp, sp, 2   jmp flags
 `
 
 default_assembly = `
