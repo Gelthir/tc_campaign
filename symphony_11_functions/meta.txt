@@ -64,6 +64,10 @@ out %a(register)
 00000010 00000000 0000aaaa 00000000
 Sends %a to output
 
+out %a(immediate)
+00010010 00000000 aaaaaaaa aaaaaaaa
+Sends %a to output
+
 console %a(register)
 00000011 00000000 0000aaaa 00000000
 Stores the value of %a in the console offset register
